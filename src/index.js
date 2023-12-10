@@ -2,6 +2,7 @@ import express from "express";
 import apiRouter from "./apiRouter.js";
 import mongoose from "mongoose";
 import cors from "cors";
+import genericErrorHandler from "../middleware/genericErrorHandler.js";
 
 const server = express();
 server.use(cors());
@@ -9,6 +10,8 @@ server.use(cors());
 const port = 3030;
 
 server.use("/api", apiRouter);
+
+server.use(genericErrorHandler)
 
 mongoose
   .connect(
