@@ -1,46 +1,44 @@
-import express from "express"
-import endpoints from "express-list-endpoints"
+import express from "express";
+import cors from "cors";
+import passport from "passport";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import endpoints from "express-list-endpoints";
+import googleStrategy from "./auth/oauth/index.js";
+import apiRouter from "./apiRouter.js";
 import {
-    badRequestHandler,
-    genericErrorHandler,
-    notfoundHandler,
-    unauthorizedHandler,
-} from "./errorHandlers.js"
-import passport from "passport"
-import googleStrategy from "./auth/oauth/index.js"
-import apiRouter from "./apiRouter.js"
-import mongoose from "mongoose"
-import cors from "cors"
+  badRequestHandler,
+  genericErrorHandler,
+  notfoundHandler,
+  unauthorizedHandler,
+} from "./errorHandlers.js";
 
-const server = express()
-server.use(cors())
+dotenv.config();
 
-const PORT = process.env.PORT || 3030
+const server = express();
 
-server.use("/api", apiRouter)
-passport.use("google", googleStrategy)
 
-server.use(badRequestHandler) // 400
-server.use(unauthorizedHandler) // 401
-server.use(notfoundHandler) // 404
-server.use(genericErrorHandler) // 500
+server.use(cors());
+server.use(express.json()); 
 
-const initServer = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URL)
-        console.log("The server has successfully connected to mongodb.")
-        server.listen(PORT, () => {
-            console.log(
-                "Server has started on port " +
-                    PORT +
-                    "!" +
-                    "The server has these endpoints:"
-            )
-            console.table(endpoints(server))
-        })
-    } catch (error) {
-        console.log("CONNECTION FAILED! Error: ", error)
-    }
-}
 
-initServer()
+passport.use("google", googleStrategy);
+
+
+server.use("/api", apiRouter);
+
+
+server.use(badRequestHandler); // 400
+server.use(unauthorizedHandler); // 401
+server.use(notfoundHandler); // 404
+server.use(genericErrorHandler); // 500
+
+const port = process.env.PORT || 3030;
+
+mongoose.connect(process.env.MONGO_URL).then(() => {
+    server.listen(port, () => {
+        console.log("Server is running on port 🚀🚀🚀 " + port)
+
+        console.table(endpoints(server))
+    })
+})
