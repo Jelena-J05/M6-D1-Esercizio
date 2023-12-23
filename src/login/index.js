@@ -1,22 +1,51 @@
-import jwt from "jsonwebtoken"
+import { Router } from "express"
+import { JWTAuthMiddleware } from "../auth/index.js"
+import Author from "../models/authors.js"
+import passport from "passport"
+import { createAccessToken } from "../auth/oauth/tools.js"
+export const loginRoute = Router()
 
-export const createAccessToken = (payload) =>
-  new Promise((resolve, reject) =>
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "1 week" },
-      (err, token) => {
-        if (err) reject(err)
-        else resolve(token)
-      }
-    )
-  ) 
+loginRoute.get(
+  "/googleLogin",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+)
 
-export const verifyAccessToken = (token) =>
-  new Promise((resolve, reject) =>
-    jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
-      if (err) reject(err)
-      else resolve(payload)
-    })
-  ) 
+loginRoute.get(
+  "/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res, next) => {
+    try {
+      res.redirect(`http://localhost:3000?accessToken=${req.user.accessToken}`)
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+loginRoute.post("/", async (req, res, next) => {
+  try {
+    const { email, password } = req.body
+
+    const user = await Author.checkCredentials(email, password)
+
+    if (user) {
+      const payload = { _id: user._id, role: user.role }
+      const accessToken = await createAccessToken(payload)
+
+      res.send({ accessToken })
+    } else {
+      next(createError(401, "Credentials are not ok!"))
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+loginRoute.get("/me", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const user = await Author.findById(req.user._id)
+    res.send(user)
+  } catch (error) {
+    next(error)
+  }
+})

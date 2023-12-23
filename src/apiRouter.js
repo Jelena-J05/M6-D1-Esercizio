@@ -1,6 +1,7 @@
 import express from "express"
 import { authorRouter } from "./authorRouter.js"
 import { blogRouter } from "./blogPostsRouter.js"
+import { loginRoute } from "./login/index.js"
 const apiRouter = express.Router()
 
 apiRouter.use(express.json())
@@ -34,7 +35,7 @@ apiRouter.post("/body", (req, res) => {
 })
 
 apiRouter.use("/authors", authorRouter)
-apiRouter.use("/blogPosts", blogPostsRouter)
+apiRouter.use("/blogPosts", blogRouter)
 apiRouter.use("/login", loginRoute)
 
 export default apiRouter

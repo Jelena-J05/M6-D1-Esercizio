@@ -4,8 +4,8 @@ import { createAccessToken } from "./tools.js"
 
 const googleStrategy = new GoogleStrategy(
   {
-    clientID: process.env.GOOGLE_ID,
-    clientSecret: process.env.GOOGLE_SECRET,
+    clientID:`550294558690-d64l039q1euj1chmnsipvnenrii4r85h.apps.googleusercontent.com`,
+    clientSecret:`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`,
     callbackURL: `${process.env.API_URL}login/callback`,
   },
   async (_, __, profile, passportNext) => {
