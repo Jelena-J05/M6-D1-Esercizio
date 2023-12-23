@@ -1,89 +1,88 @@
-import express from "express";
-import { Author } from "./models/authors.js";
+import { Router } from "express"
+import Author from "./models/authors.js"
+import Blog from "./models/blogPosts.js"
+import cloudinaryUploader from "./config/index.js"
+import { JWTAuthMiddleware } from "./auth/middlewares.js"
 
-const authorRouter = express.Router();
+export const authorRouter = Router()
 
-authorRouter.get("/test", async (req, res, next) => {
-  res.json({ message: "Users router working!" });
-});
+authorRouter
+    .get("/", JWTAuthMiddleware, async (req, res, next) => {
+        try {
+            let authors = await Author.find()
+            res.send(authors)
+        } catch (error) {
+            next(error)
+        }
+    })
 
-authorRouter.get("/", async (req, res) => {
-  const authors = await Author.find({});
-  res.json(authors);
-});
+    .get("/:id", JWTAuthMiddleware, async (req, res, next) => {
+        try {
+            let author = await Author.findById(req.params.id)
+            res.send(author)
+        } catch (error) {
+            next(error)
+        }
+    })
 
-authorRouter.get("/:id", async (req, res, next) => {
-  try {
-  const author = await Author.findById(req.params.id);
+    .get("/:id/blogs", JWTAuthMiddleware, async (req, res, next) => {
+        try {
+            let author = await Blog.find({
+                author: req.params.id,
+            }).populate({
+                path: "author",
+                select: ["name", "lastName", "avatar"],
+            })
+            res.send(author)
+        } catch (error) {
+            next(error)
+        }
+    })
 
-  if (!author) {
-    return res.status(404).send();
-  }
+    .post("/", async (req, res, next) => {
+        try {
+            let author = await Author.create(req.body)
+            res.send(author)
+        } catch (error) {
+            next(error)
+        }
+    })
+    .put("/:id", JWTAuthMiddleware, async (req, res, next) => {
+        try {
+            let author = await Author.findByIdAndUpdate(
+                req.params.id,
+                req.body,
+                {
+                    new: true,
+                }
+            )
+            res.send(author)
+        } catch (error) {
+            next(error)
+        }
+    })
 
-  res.json(author);
-} catch (err) {
-  next(err);
-  }
-})
+    .patch("/:id/avatar", cloudinaryUploader, async (req, res, next) => {
+        try {
+            console.log(req.file)
+            let updated = await Author.findByIdAndUpdate(
+                req.params.id,
+                { avatar: req.file.path },
+                { new: true }
+            )
+            res.send(updated)
+        } catch (error) {
+            next(error)
+        }
+    })
 
-authorRouter.get("/:id/blogPost", async (req, res, next) => {
-  try {
-    let author = await blogPost.find({ author: mongoose.Types.ObjectId(req.params.id) })
-      .populate({ path: "author", select: ["firstName", "lastName", "avatar"] });
-
-    res.send(author);
-  } catch (error) {
-    next(error);
-  }
-});
-
-
-authorRouter.post("/", async (req, res) => {
-  const newAuthor = new Author(req.body); //we can also use create to create and save the new author
-
-  await newAuthor.save();
-
-  res.status(201).send(newAuthor);
-});
-
-authorRouter.put("/:id", async (req, res, next) => {
-  try {
-    const updatedAuthor = await Author.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-
-    if (!updatedAuthor) {
-      return res.status(404).send(); 
-    }
-
-    res.json(updatedAuthor); 
-  } catch (error) {
-    res.status(500).send();
-  }
-});
-
-authorRouter.patch("/:id/avatar",  async (req, res, next) => {
-  try {
-    console.log(req.file)
-    let updated = await Author.findByIdAndUpdate(req.params.id, {avatar: req.file.path}, {new: true})
-    res.send(updated)
-  } catch (error) {
-    next(error)
-  }
-})
-
-authorRouter.delete("/:id", async (req, res, next) => {
-  try {
-    const deletedDocument = await Author.findByIdAndDelete(req.params.id);
-
-    if (!deletedDocument) {
-      return res.status(404).send(); 
-    }
-
-    res.status(204).send(); 
-  } catch (error) {
-    res.status(500).send();
-  }
-});
-
-export default authorRouter;
+    .delete("/:id", async (req, res, next) => {
+        try {
+            await Author.deleteOne({
+                _id: req.params.id,
+            })
+            res.send(204)
+        } catch (error) {
+            next(error)
+        }
+    })

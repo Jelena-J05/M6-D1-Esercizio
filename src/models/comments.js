@@ -1,22 +1,21 @@
-import mongoose from "mongoose";
-
-const { Schema } = mongoose;
+import { Schema, model } from "mongoose"
 
 const commentsSchema = new Schema(
-  {
-    text: {
-      type: String,
-      required: true,
+    {
+        text: {
+            type: String,
+            required: true,
+        },
+        author: {
+            type: Schema.Types.ObjectId,
+            ref: "Author",
+        },
+        blog: {
+            type: Schema.Types.ObjectId,
+            ref: "Blog",
+        },
     },
-    author: {
-      type: Schema.Types.ObjectId,
-      ref: "Author",
-    },
-    blogPost: {
-        type: Schema.Types.ObjectId,
-        ref: "blogPost",
-    }
-  },
+    { collection: "comments" }
 )
 
-export const Comment = mongoose.model ("Comments", commentsSchema)
+export default model("Comments", commentsSchema)

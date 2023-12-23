@@ -1,12 +1,12 @@
-import express from "express";
-import authorRouter from "./authorRouter.js";
-import blogPostsRouter from "./blogPostsRouter.js";
-const apiRouter = express.Router();
+import express from "express"
+import authorRouter from "./authorRouter.js"
+import blogPostsRouter from "./blogPostsRouter.js"
+const apiRouter = express.Router()
 
-apiRouter.use(express.json());
+apiRouter.use(express.json())
 
 apiRouter.get("/", (req, res) => {
-  res.status(200).send(/*html*/ `
+    res.status(200).send(/*html*/ `
   <!doctype html>
   <html lang="en">
     <head>
@@ -20,21 +20,21 @@ apiRouter.get("/", (req, res) => {
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     </body>
   </html>
-    `);
-});
+    `)
+})
 
 apiRouter.get("/test", (req, res) => {
-  res.json({ message: "Hello, world!" });
-});
+    res.json({ message: "Hello, world!" })
+})
 
 apiRouter.post("/body", (req, res) => {
-  console.log(req.body);
+    console.log(req.body)
 
-  res.status(200).send();
-});
+    res.status(200).send()
+})
 
-apiRouter.use("/authors", authorRouter);
-apiRouter.use("/blogPosts", blogPostsRouter);
+apiRouter.use("/authors", authorRouter)
+apiRouter.use("/blogPosts", blogPostsRouter)
+apiRouter.use("/login", loginRoute)
 
-
-export default apiRouter;
+export default apiRouter
