@@ -2,7 +2,7 @@ import { Router } from "express"
 import Author from "./models/authors.js"
 import Blog from "./models/blogPosts.js"
 import cloudinaryUploader from "./config/index.js"
-import { JWTAuthMiddleware } from "./auth/middlewares.js"
+import { JWTAuthMiddleware} from "./auth/middlewares.js"
 
 export const authorRouter = Router()
 
