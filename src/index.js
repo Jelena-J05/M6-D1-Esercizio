@@ -1,14 +1,11 @@
 import express from "express"
 import endpoints from "express-list-endpoints"
-import { authorRouter } from "./authorRouter.js "
-import { blogRouter } from "./blogPostsRouter.js"
 import {
     badRequestHandler,
     genericErrorHandler,
     notfoundHandler,
     unauthorizedHandler,
 } from "./errorHandlers.js"
-import { loginRoute } from "./login/index.js"
 import passport from "passport"
 import googleStrategy from "./auth/oauth/index.js"
 import apiRouter from "./apiRouter.js"

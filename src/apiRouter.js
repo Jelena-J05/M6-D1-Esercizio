@@ -1,6 +1,6 @@
 import express from "express"
-import authorRouter from "./authorRouter.js"
-import blogPostsRouter from "./blogPostsRouter.js"
+import { authorRouter } from "./authorRouter.js"
+import { blogRouter } from "./blogPostsRouter.js"
 const apiRouter = express.Router()
 
 apiRouter.use(express.json())

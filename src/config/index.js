@@ -10,3 +10,10 @@ export default multer({
     },
   }),
 }).single("avatar")
+
+          
+cloudinary.config({ 
+  cloud_name: 'dzvbmdvzd', 
+  api_key: '748874198823242', 
+  api_secret: 'ebZ62yxmHOYNzTdST6gAp86UVcA' 
+});
