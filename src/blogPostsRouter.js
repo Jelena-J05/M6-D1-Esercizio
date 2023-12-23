@@ -159,5 +159,18 @@ blogPostsRouter.post("/:id", async (req, res, next) => {
   }
 })
 
+blogPostsRouter.patch("/:id/cover", async (req, res, next) => {
+  try {
+    let updated = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { cover: req.file.path },
+      { new: true }
+    )
+    res.send(updated)
+  } catch (error) {
+    next(error)
+  }
+})
+
 
 export default blogPostsRouter;

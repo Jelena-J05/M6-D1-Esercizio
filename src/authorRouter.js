@@ -62,6 +62,16 @@ authorRouter.put("/:id", async (req, res, next) => {
   }
 });
 
+authorRouter.patch("/:id/avatar",  async (req, res, next) => {
+  try {
+    console.log(req.file)
+    let updated = await Author.findByIdAndUpdate(req.params.id, {avatar: req.file.path}, {new: true})
+    res.send(updated)
+  } catch (error) {
+    next(error)
+  }
+})
+
 authorRouter.delete("/:id", async (req, res, next) => {
   try {
     const deletedDocument = await Author.findByIdAndDelete(req.params.id);

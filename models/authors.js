@@ -8,7 +8,6 @@ const AuthorSchema = new Schema({
   },
   cognome: {
     type: String,
-    required: true,
   },
   dataDiNascita: {
     type: String,
